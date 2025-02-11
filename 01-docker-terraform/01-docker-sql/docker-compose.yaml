@@ -1,0 +1,35 @@
+services:
+    postgres_database:
+        image: postgres:17.2
+        environment:
+            - POSTGRES_USER=hoangnguyenthe
+            - POSTGRES_PASSWORD=admin
+            - POSTGRES_DB=ny_taxi
+        volumes:
+            - "./postgres_data_ny_taxi:/var/lib/postgresql/data:rw"
+        ports:
+            - "5432:5432"
+
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+            - PGADMIN_DEFAULT_PASSWORD=admin
+        volumes:
+            - "./pgadmin_ny_taxi:/var/lib/pgadmin:rw"
+        ports:
+            - "8080:80"
+
+    jupyter:
+        image: jupyter/scipy-notebook:latest
+        container_name: jupyter_notebook
+        ports:
+            - "8888:8888"
+        volumes:
+            - "./notebooks:/home/jovyan/work" # Local notebooks directory
+            - "./input:/home/jovyan/input" # Mount the local 'input' directory
+        environment:
+            - JUPYTER_ENABLE_LAB=yes
+            - NB_USER=jovyan
+        depends_on:
+            - postgres_database
